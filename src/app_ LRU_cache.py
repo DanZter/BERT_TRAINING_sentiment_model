@@ -1,3 +1,4 @@
+""" implementing the concept of cache using LRU which saves a certaing number of requests in memory aka RAM"""
 import flask
 from flask import Flask
 from flask import request, render_template
@@ -10,30 +11,23 @@ import time
 from flask import Flask
 from flask import request
 
+import functools
 import torch.nn as nn
-import joblib
+
 
 app = Flask(__name__)     # initialize flask app
 
 MODEL = None
 DEVICE = "cpu"
 PREDICTION_DICT = dict()
-memory = joblib.Memory("../input/", verbose=0)
+
 
 @app.route("/")
 def home():
   return render_template("index.html")
 
-def predict_from_cache(sentence):
-    if sentence in PREDICTION_DICT:
-        return PREDICTION_DICT[sentence]
-    else:
-        result = sentence_prediction(sentence)
-        PREDICTION_DICT[sentence] = result
-        return result
 
-
-@memory.cache
+@functools.lru.cache(maxsize=128)       # saving 128 requests. If none it saves all the requests
 def sentence_prediction(sentence):
     tokenizer = config.TOKENIZER
     max_len = config.MAX_LEN

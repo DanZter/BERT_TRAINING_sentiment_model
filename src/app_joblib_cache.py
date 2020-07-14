@@ -1,3 +1,6 @@
+""" SAVING CACHE ON THE DISK IS THE BEST WAY.
+The LRU and Predict_Dict method saves the cache in RAM and its not the best idea.
+But since its on disk it takes a bit more time when compare to the RAM ones. But significantly better than the default"""
 import flask
 from flask import Flask
 from flask import request, render_template
@@ -11,7 +14,7 @@ from flask import Flask
 from flask import request
 
 import torch.nn as nn
-import joblib
+import joblib               
 
 app = Flask(__name__)     # initialize flask app
 

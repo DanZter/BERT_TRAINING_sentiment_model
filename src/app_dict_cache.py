@@ -1,3 +1,4 @@
+""" implementing the concept of cache using a predict_dictionary saving in memory aka RAM"""
 import flask
 from flask import Flask
 from flask import request, render_template
@@ -10,16 +11,15 @@ import time
 from flask import Flask
 from flask import request
 
-import functools
 import torch.nn as nn
-import joblib
+
 
 app = Flask(__name__)     # initialize flask app
 
 MODEL = None
 DEVICE = "cpu"
 PREDICTION_DICT = dict()
-memory = joblib.Memory("../input/", verbose=0)
+
 
 @app.route("/")
 def home():
@@ -33,8 +33,6 @@ def predict_from_cache(sentence):
         PREDICTION_DICT[sentence] = result
         return result
 
-
-@memory.cache
 def sentence_prediction(sentence):
     tokenizer = config.TOKENIZER
     max_len = config.MAX_LEN
@@ -78,7 +76,7 @@ def predict():                                      # predict function
     sentence = sentence[0]
     # sentence = str(request.form.values())
     start_time = time.time()
-    positive_prediction = sentence_prediction(sentence)
+    positive_prediction = predict_from_cache(sentence)
     negative_prediction = 1 - positive_prediction
     response = {}
     response["response"] = {
