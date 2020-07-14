@@ -132,6 +132,7 @@ dmypy.json
 # input data and models
 input/
 models/
+model/
 
 
 # data files
